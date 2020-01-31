@@ -1,7 +1,9 @@
+import 'package:aula_2/Task.dart';
 import 'package:aula_2/add_page.dart';
 import 'package:aula_2/taskrow.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -28,7 +30,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> todoList = [];
+  List<Task> todoList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
               callback: (){
                 loadlist();
               },
-              text: todoList[position]);
+              task: todoList[position]);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -57,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ) ??
               false;
 
-          print(res);
         },
         child: Icon(Icons.add),
       ),
@@ -67,7 +68,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void loadlist() async {
     var prefs = await SharedPreferences.getInstance();
     setState(() {
-      todoList = prefs.getStringList('tasks') ?? [];
+      List<String> tasksString = prefs.getStringList('lista') ?? [];
+      List<Task> listTemp = [];
+
+      tasksString.forEach((String s) {
+        var task = taskFromJson(s);
+        listTemp.add(task);
+      });
+
+      todoList = listTemp;
+
     });
   }
 }

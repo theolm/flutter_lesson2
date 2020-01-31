@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Task.dart';
+
 class AddPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -54,14 +56,21 @@ class AddPageBody extends StatelessWidget {
   }
 
   void saveTask(BuildContext context) async {
-    if(_controller.text != null) {
+    if (_controller.text != null && _controller.text.isNotEmpty) {
       var prefs = await SharedPreferences.getInstance();
-      List<String> tasks = prefs.getStringList('tasks') ?? [];
-      tasks.add(_controller.text);
-      print(tasks);
-      prefs.setStringList('tasks', tasks);
-      Navigator.pop(context, true);
-    }
+      List<String> tasks = prefs.getStringList('lista') ?? [];
 
+      Task task = Task(
+        id: 1,
+        task: _controller.text,
+        value: false,
+      );
+
+      String json = taskToJson(task);
+      tasks.add(json);
+      prefs.setStringList('lista', tasks);
+      Navigator.pop(context, true);
+
+    }
   }
 }
